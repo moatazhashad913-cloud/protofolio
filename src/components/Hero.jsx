@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import ThreadsBackground from "./ThreadsBackground";
+import Shuffle from "./Shuffle";
 
 const stats = [
   { label: "Years", value: "3+" },
@@ -36,15 +37,30 @@ export default function Hero() {
             Available for new projects
           </motion.div>
 
-          <motion.h1
-            className="mt-6 text-4xl md:text-6xl font-extrabold tracking-tight"
+          <motion.div
+            className="mt-6"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.15, duration: 0.8 }}
           >
-            MOATAZ{" "}
-            <span className="text-[#A7F432]">HASHAD</span>
-          </motion.h1>
+            <Shuffle
+              text="MOATAZ HASHAD"
+              shuffleDirection="right"
+              duration={0.35}
+              animationMode="evenodd"
+              shuffleTimes={1}
+              ease="power3.out"
+              stagger={0.03}
+              threshold={0.1}
+              triggerOnce={true}
+              triggerOnHover
+              respectReducedMotion={true}
+              loop={false}
+              loopDelay={0}
+              tag="h1"
+              className="text-4xl md:text-6xl font-extrabold tracking-tight text-white"
+            />
+          </motion.div>
 
           <motion.p
             className="mt-5 text-lg md:text-xl text-white/70 max-w-xl"

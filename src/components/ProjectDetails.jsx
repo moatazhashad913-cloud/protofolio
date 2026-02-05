@@ -57,6 +57,8 @@ export default function ProjectDetails({ project, onBack }) {
                   src={src}
                   alt={`${project.title} ${i}`}
                   className="w-full rounded-2xl border border-white/10 object-cover"
+                  loading="lazy"
+                  decoding="async"
                   initial={{ scale: 0.98, opacity: 0.85 }}
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ duration: 0.6, delay: i * 0.06 }}
@@ -75,6 +77,7 @@ export default function ProjectDetails({ project, onBack }) {
                 controls
                 src={project.video}
                 className="w-full rounded-2xl border border-white/10 bg-black/50"
+                preload="metadata"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.6 }}

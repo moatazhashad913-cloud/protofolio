@@ -4,7 +4,7 @@ import projects from "../data/projects.js";
 
 export default function Projects({ onSelect }) {
   return (
-    <section id="projects" className="relative text-white py-20">
+    <section id="projects" className="relative text-white py-20 lazy-section">
       <div className="max-w-6xl mx-auto px-6 relative z-10">
         <h2 className="text-2xl md:text-3xl font-semibold">Selected Projects</h2>
         <p className="mt-2 text-white/70 max-w-2xl">

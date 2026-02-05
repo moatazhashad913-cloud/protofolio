@@ -23,7 +23,7 @@ const skills = [
 
 export default function Skills() {
   return (
-    <section id="skills" className="relative text-white py-20">
+    <section id="skills" className="relative text-white py-20 lazy-section">
       <div className="max-w-6xl mx-auto px-6 relative z-10">
         <h2 className="text-2xl md:text-3xl font-semibold">Skills</h2>
         <p className="mt-2 text-white/70 max-w-2xl">

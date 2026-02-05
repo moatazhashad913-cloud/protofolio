@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 
 export default function Contact() {
   return (
-    <section id="contact" className="relative text-white py-24">
+    <section id="contact" className="relative text-white py-24 lazy-section">
       <div className="max-w-6xl mx-auto px-6 relative z-10">
         <div className="flex items-center gap-3 text-xs md:text-sm px-3 py-1 rounded-full border border-white/15 bg-white/5 w-fit">
           <span className="h-2 w-2 rounded-full bg-[#A7F432]" />
