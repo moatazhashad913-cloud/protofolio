@@ -1,0 +1,24 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@keyframes gradient-move {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animate-gradient-move {
+  background-size: 400% 400%;
+  animation: gradient-move 20s ease infinite;
+}
+
+/* Body uses Manrope for a clean editorial tone */
+body {
+  font-family: 'Manrope', ui-sans-serif, system-ui, -apple-system, "Segoe UI", Arial;
+}
+
+/* Headings use Space Grotesk for a bold, modern feel */
+h1,h2,h3,h4 {
+  font-family: 'Space Grotesk', ui-sans-serif, system-ui, -apple-system, "Segoe UI", Arial;
+}

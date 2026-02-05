@@ -1,0 +1,61 @@
+import { useRef, useEffect } from "react";
+
+export default function LiveBackground() {
+  const canvasRef = useRef(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d");
+
+    const resize = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    };
+    resize();
+    window.addEventListener("resize", resize);
+
+    const dots = Array.from({ length: 90 }, () => ({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      vx: (Math.random() - 0.5) * 0.35,
+      vy: (Math.random() - 0.5) * 0.35,
+    }));
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      dots.forEach((d) => {
+        d.x += d.vx;
+        d.y += d.vy;
+
+        if (d.x < 0 || d.x > canvas.width) d.vx *= -1;
+        if (d.y < 0 || d.y > canvas.height) d.vy *= -1;
+
+        ctx.beginPath();
+        ctx.arc(d.x, d.y, 1.2, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(255,255,255,0.35)";
+        ctx.fill();
+      });
+
+      requestAnimationFrame(draw);
+    }
+
+    draw();
+    return () => window.removeEventListener("resize", resize);
+  }, []);
+
+  return (
+    <>
+      <canvas ref={canvasRef} className="fixed inset-0 -z-20 bg-black" />
+      <div
+        className="fixed inset-0 -z-10 pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(circle at top, rgba(167,244,50,0.12) 0%, rgba(0,0,0,0) 55%)",
+        }}
+      />
+      <div className="fixed inset-x-0 top-0 h-40 bg-gradient-to-b from-black to-transparent -z-10" />
+      <div className="fixed inset-x-0 bottom-0 h-40 bg-gradient-to-t from-black to-transparent -z-10" />
+    </>
+  );
+}
