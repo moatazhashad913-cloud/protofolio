@@ -1,48 +1,79 @@
 import { useRef, useEffect } from "react";
 
-export default function LiveBackground() {
+export default function LiveBackground({ onReady }) {
   const canvasRef = useRef(null);
 
   useEffect(() => {
+    let rafId = 0;
+    let cancelled = false;
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
 
-    const resize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+    const init = () => {
+      if (cancelled) return;
+
+      const resize = () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      };
+      resize();
+      window.addEventListener("resize", resize);
+
+      const dots = Array.from({ length: 90 }, () => ({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        vx: (Math.random() - 0.5) * 0.35,
+        vy: (Math.random() - 0.5) * 0.35,
+      }));
+
+      function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        dots.forEach((d) => {
+          d.x += d.vx;
+          d.y += d.vy;
+
+          if (d.x < 0 || d.x > canvas.width) d.vx *= -1;
+          if (d.y < 0 || d.y > canvas.height) d.vy *= -1;
+
+          ctx.beginPath();
+          ctx.arc(d.x, d.y, 1.2, 0, Math.PI * 2);
+          ctx.fillStyle = "rgba(255,255,255,0.35)";
+          ctx.fill();
+        });
+
+        rafId = requestAnimationFrame(draw);
+      }
+
+      onReady?.();
+      draw();
+
+      return () => window.removeEventListener("resize", resize);
     };
-    resize();
-    window.addEventListener("resize", resize);
 
-    const dots = Array.from({ length: 90 }, () => ({
-      x: Math.random() * canvas.width,
-      y: Math.random() * canvas.height,
-      vx: (Math.random() - 0.5) * 0.35,
-      vy: (Math.random() - 0.5) * 0.35,
-    }));
-
-    function draw() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      dots.forEach((d) => {
-        d.x += d.vx;
-        d.y += d.vy;
-
-        if (d.x < 0 || d.x > canvas.width) d.vx *= -1;
-        if (d.y < 0 || d.y > canvas.height) d.vy *= -1;
-
-        ctx.beginPath();
-        ctx.arc(d.x, d.y, 1.2, 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(255,255,255,0.35)";
-        ctx.fill();
-      });
-
-      requestAnimationFrame(draw);
+    let cleanup = null;
+    if ("requestIdleCallback" in window) {
+      const idleId = window.requestIdleCallback(
+        () => {
+          cleanup = init();
+        },
+        { timeout: 1200 }
+      );
+      return () => {
+        cancelled = true;
+        window.cancelIdleCallback?.(idleId);
+        if (cleanup) cleanup();
+        if (rafId) cancelAnimationFrame(rafId);
+      };
     }
 
-    draw();
-    return () => window.removeEventListener("resize", resize);
-  }, []);
+    cleanup = init();
+    return () => {
+      cancelled = true;
+      if (cleanup) cleanup();
+      if (rafId) cancelAnimationFrame(rafId);
+    };
+  }, [onReady]);
 
   return (
     <>

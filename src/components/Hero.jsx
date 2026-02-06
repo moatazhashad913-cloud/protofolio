@@ -1,6 +1,8 @@
+import React, { Suspense } from "react";
 import { motion } from "framer-motion";
-import ThreadsBackground from "./ThreadsBackground";
 import Shuffle from "./Shuffle";
+
+const LazyThreadsBackground = React.lazy(() => import("./ThreadsBackground"));
 
 const stats = [
   { label: "Years", value: "3+" },
@@ -17,13 +19,21 @@ const tech = [
   "AWS",
 ];
 
-export default function Hero() {
+export default function Hero({
+  showBackground = true,
+  onBackgroundReady,
+  scrollReady = true,
+}) {
   return (
     <section
       id="about"
       className="relative min-h-screen px-6 pt-28 pb-16 text-white overflow-hidden"
     >
-      <ThreadsBackground />
+      <Suspense fallback={null}>
+        {showBackground ? (
+          <LazyThreadsBackground onReady={onBackgroundReady} />
+        ) : null}
+      </Suspense>
 
       <div className="relative z-10 max-w-6xl mx-auto grid lg:grid-cols-[1.1fr_0.9fr] gap-12 items-center">
         <div>
@@ -59,6 +69,7 @@ export default function Hero() {
               loopDelay={0}
               tag="h1"
               className="text-4xl md:text-6xl font-extrabold tracking-tight text-white"
+              enabled={scrollReady}
             />
           </motion.div>
 

@@ -1,6 +1,8 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #0B2B26;
+}
 
 @keyframes gradient-move {
   0% { background-position: 0% 50%; }
@@ -27,4 +29,13 @@ h1,h2,h3,h4 {
 .lazy-section {
   content-visibility: auto;
   contain-intrinsic-size: 800px;
+}
+
+.lcp-title {
+  position: fixed;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  pointer-events: none;
+  user-select: none;
 }

@@ -5,32 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MOATAZ</title>
   <link rel="icon" type="image/jpeg" href="/logo.jpg" />
-  <!-- Tailwind CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
 
   <!-- Google Fonts: Manrope + Space Grotesk -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-
-  <!-- Custom Colors -->
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            primary: '#0B2B26',
-          },
-        },
-      },
-    }
-  </script>
 </head>
 <body class="bg-black">
   <div id="root"></div>
-  <script type="module" src="/src/main.jsx"></script>
-  <!-- GSAP (for advanced motion effects) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script type="module" src="/src/main.jsx" defer></script>
 </body>
 </html>

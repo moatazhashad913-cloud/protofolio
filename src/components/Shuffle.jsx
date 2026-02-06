@@ -29,7 +29,8 @@ const Shuffle = ({
   colorTo,
   triggerOnce = true,
   respectReducedMotion = true,
-  triggerOnHover = true
+  triggerOnHover = true,
+  enabled = true
 }) => {
   const ref = useRef(null);
   const [fontsLoaded, setFontsLoaded] = useState(false);
@@ -62,9 +63,13 @@ const Shuffle = ({
     } else setFontsLoaded(true);
   }, []);
 
+  useEffect(() => {
+    if (!enabled) setReady(true);
+  }, [enabled]);
+
   useGSAP(
     () => {
-      if (!ref.current || !text || !fontsLoaded) return;
+      if (!enabled || !ref.current || !text || !fontsLoaded) return;
 
       if (respectReducedMotion && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
         onShuffleComplete?.();
@@ -358,6 +363,7 @@ const Shuffle = ({
         ease,
         scrollTriggerStart,
         fontsLoaded,
+        enabled,
         shuffleDirection,
         shuffleTimes,
         animationMode,

@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from "react";
+import { gsap } from "gsap";
 
 export default function Intro({ onFinish = () => {} }) {
   const circleRef = useRef(null);
@@ -6,20 +7,15 @@ export default function Intro({ onFinish = () => {} }) {
 
   useEffect(() => {
     let mounted = true;
-    const gsap = window?.gsap;
-    if (!gsap) {
-      const t = setTimeout(() => { if (mounted) onFinish(); }, 800);
-      return () => { mounted = false; clearTimeout(t); };
-    }
-
-    const tl = gsap.timeline({ defaults: { ease: "power2.out" } });
+    const tl = gsap.timeline({ defaults: { ease: "power2.out", force3D: true } });
 
     gsap.set(circleRef.current, {
       scale: 0.9,
       opacity: 0,
       y: 20,
+      force3D: true,
     });
-    gsap.set(nameRef.current, { opacity: 0, y: 6 });
+    gsap.set(nameRef.current, { opacity: 0, y: 6, force3D: true });
 
     tl.fromTo(
       circleRef.current,
@@ -30,21 +26,23 @@ export default function Intro({ onFinish = () => {} }) {
         y: 0,
         duration: 0.45,
         ease: "back.out(1.2)",
+        force3D: true,
       }
     )
       .fromTo(
         nameRef.current,
         { opacity: 0, y: 6 },
-        { opacity: 1, y: 0, duration: 0.35 },
+        { opacity: 1, y: 0, duration: 0.35, force3D: true },
         "-=0.18"
       )
       .to({}, { duration: 0.25 })
-      .to(nameRef.current, { opacity: 0, y: -6, duration: 0.18 })
+      .to(nameRef.current, { opacity: 0, y: -6, duration: 0.18, force3D: true })
       .to(circleRef.current, {
         scale: 14,
         opacity: 0,
         duration: 0.45,
         ease: "power2.in",
+        force3D: true,
       });
 
     tl.eventCallback("onComplete", () => {
