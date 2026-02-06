@@ -39,3 +39,47 @@ h1,h2,h3,h4 {
   pointer-events: none;
   user-select: none;
 }
+
+.intro-wrap {
+  animation: intro-wrap 1.6s ease-out forwards;
+}
+
+.intro-circle {
+  animation: intro-circle 1.6s ease-out forwards;
+  will-change: transform, opacity;
+  transform-origin: 50% 50%;
+}
+
+.intro-name {
+  animation: intro-name 1.6s ease-out forwards;
+  will-change: transform, opacity;
+}
+
+@keyframes intro-wrap {
+  0% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes intro-circle {
+  0% { transform: translateY(18px) scale(0.95); opacity: 0; }
+  40% { transform: translateY(0) scale(1); opacity: 1; }
+  70% { transform: translateY(0) scale(1); opacity: 1; }
+  100% { transform: translateY(0) scale(12); opacity: 0; }
+}
+
+@keyframes intro-name {
+  0% { transform: translateY(6px); opacity: 0; }
+  45% { transform: translateY(0); opacity: 1; }
+  70% { transform: translateY(0); opacity: 1; }
+  85% { transform: translateY(-6px); opacity: 0; }
+  100% { transform: translateY(-6px); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .intro-wrap,
+  .intro-circle,
+  .intro-name {
+    animation: none;
+  }
+}

@@ -12,6 +12,8 @@ export default function LiveBackground({ onReady }) {
     const init = () => {
       if (cancelled) return;
 
+      let running = false;
+
       const resize = () => {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
@@ -27,6 +29,11 @@ export default function LiveBackground({ onReady }) {
       }));
 
       function draw() {
+        if (document.hidden) {
+          running = false;
+          rafId = 0;
+          return;
+        }
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         dots.forEach((d) => {
@@ -46,9 +53,31 @@ export default function LiveBackground({ onReady }) {
       }
 
       onReady?.();
-      draw();
+      const start = () => {
+        if (running) return;
+        running = true;
+        rafId = requestAnimationFrame(draw);
+      };
 
-      return () => window.removeEventListener("resize", resize);
+      const stop = () => {
+        running = false;
+        if (rafId) cancelAnimationFrame(rafId);
+        rafId = 0;
+      };
+
+      const onVisibility = () => {
+        if (document.hidden) stop();
+        else start();
+      };
+
+      document.addEventListener("visibilitychange", onVisibility);
+      start();
+
+      return () => {
+        window.removeEventListener("resize", resize);
+        document.removeEventListener("visibilitychange", onVisibility);
+        stop();
+      };
     };
 
     let cleanup = null;

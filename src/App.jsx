@@ -46,6 +46,7 @@ export default function App() {
     }catch(e){}
   }, []);
 
+
   useEffect(() => {
     if (showIntro) return;
     let cancelled = false;

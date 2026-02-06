@@ -1,9 +1,14 @@
 import React from "react";
 import { motion } from "framer-motion";
 
+const gridVariant = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.08 } },
+};
+
 const cardVariant = {
   hidden: { opacity: 0, y: 18 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
 };
 
 export default function BelowHero() {
@@ -23,7 +28,13 @@ export default function BelowHero() {
           results. Every detail is intentional.
         </p>
 
-        <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+        <motion.div
+          className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6"
+          variants={gridVariant}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+        >
           {[
             {
               title: "Strategy",
@@ -42,11 +53,7 @@ export default function BelowHero() {
               key={i}
               className="p-6 rounded-3xl bg-white/5 border border-white/10 backdrop-blur"
               variants={cardVariant}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0.2 }}
-              whileHover={{ scale: 1.02 }}
-              transition={{ duration: 0.18 }}
+              whileHover={{ scale: 1.02, transition: { duration: 0.18 } }}
             >
               <h4 className="font-medium text-white">{c.title}</h4>
               <p className="text-sm text-white/65 mt-2">{c.body}</p>
@@ -55,7 +62,7 @@ export default function BelowHero() {
               </div>
             </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );

@@ -121,6 +121,10 @@ void main() {
 const Threads = ({ color = [1, 1, 1], amplitude = 1, distance = 0, enableMouseInteraction = false, ...rest }) => {
   const containerRef = useRef(null);
   const animationFrameId = useRef();
+  const updateRef = useRef(null);
+  const inViewRef = useRef(true);
+  const pageVisibleRef = useRef(true);
+  const runningRef = useRef(false);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -179,6 +183,10 @@ const Threads = ({ color = [1, 1, 1], amplitude = 1, distance = 0, enableMouseIn
     }
 
     function update(t) {
+      if (!inViewRef.current || !pageVisibleRef.current) {
+        runningRef.current = false;
+        return;
+      }
       if (enableMouseInteraction) {
         const smoothing = 0.05;
         currentMouse[0] += smoothing * (targetMouse[0] - currentMouse[0]);
@@ -194,11 +202,45 @@ const Threads = ({ color = [1, 1, 1], amplitude = 1, distance = 0, enableMouseIn
       renderer.render({ scene: mesh });
       animationFrameId.current = requestAnimationFrame(update);
     }
-    animationFrameId.current = requestAnimationFrame(update);
+    updateRef.current = update;
+
+    const start = () => {
+      if (runningRef.current) return;
+      runningRef.current = true;
+      animationFrameId.current = requestAnimationFrame(update);
+    };
+
+    const stop = () => {
+      runningRef.current = false;
+      if (animationFrameId.current) cancelAnimationFrame(animationFrameId.current);
+      animationFrameId.current = undefined;
+    };
+
+    const onVisibility = () => {
+      pageVisibleRef.current = !document.hidden;
+      if (pageVisibleRef.current && inViewRef.current) start();
+      else stop();
+    };
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        inViewRef.current = entries[0]?.isIntersecting ?? true;
+        if (inViewRef.current && pageVisibleRef.current) start();
+        else stop();
+      },
+      { threshold: 0.1 }
+    );
+
+    observer.observe(container);
+    document.addEventListener('visibilitychange', onVisibility);
+
+    start();
 
     return () => {
-      if (animationFrameId.current) cancelAnimationFrame(animationFrameId.current);
+      stop();
       window.removeEventListener('resize', resize);
+      observer.disconnect();
+      document.removeEventListener('visibilitychange', onVisibility);
 
       if (enableMouseInteraction) {
         container.removeEventListener('mousemove', handleMouseMove);

@@ -1,62 +1,26 @@
 import React, { useEffect, useRef } from "react";
-import { gsap } from "gsap";
 
 export default function Intro({ onFinish = () => {} }) {
-  const circleRef = useRef(null);
-  const nameRef = useRef(null);
+  const doneRef = useRef(false);
 
   useEffect(() => {
-    let mounted = true;
-    const tl = gsap.timeline({ defaults: { ease: "power2.out", force3D: true } });
+    const prefersReduced =
+      typeof window !== "undefined" &&
+      window.matchMedia &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    gsap.set(circleRef.current, {
-      scale: 0.9,
-      opacity: 0,
-      y: 20,
-      force3D: true,
-    });
-    gsap.set(nameRef.current, { opacity: 0, y: 6, force3D: true });
+    const totalMs = prefersReduced ? 0 : 1600;
+    const timer = setTimeout(() => {
+      if (doneRef.current) return;
+      doneRef.current = true;
+      onFinish();
+    }, totalMs);
 
-    tl.fromTo(
-      circleRef.current,
-      { opacity: 0, scale: 0.9, y: 20 },
-      {
-        opacity: 1,
-        scale: 1,
-        y: 0,
-        duration: 0.45,
-        ease: "back.out(1.2)",
-        force3D: true,
-      }
-    )
-      .fromTo(
-        nameRef.current,
-        { opacity: 0, y: 6 },
-        { opacity: 1, y: 0, duration: 0.35, force3D: true },
-        "-=0.18"
-      )
-      .to({}, { duration: 0.25 })
-      .to(nameRef.current, { opacity: 0, y: -6, duration: 0.18, force3D: true })
-      .to(circleRef.current, {
-        scale: 14,
-        opacity: 0,
-        duration: 0.45,
-        ease: "power2.in",
-        force3D: true,
-      });
-
-    tl.eventCallback("onComplete", () => {
-      if (mounted) onFinish();
-    });
-
-    return () => {
-      mounted = false;
-      tl.kill();
-    };
+    return () => clearTimeout(timer);
   }, [onFinish]);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black intro-wrap">
       {/* background shapes */}
       <div className="absolute left-1/3 top-1/3 w-28 h-28 rounded-lg bg-white/5 -z-10" />
       <div className="absolute right-1/3 top-1/4 w-24 h-24 rounded-lg bg-white/5 -z-10" />
@@ -68,20 +32,19 @@ export default function Intro({ onFinish = () => {} }) {
             <div className="absolute -inset-6 rounded-full bg-[#A7F432]/20 blur-2xl" />
             <div
               aria-hidden
-              ref={circleRef}
-              className="relative h-28 w-28 md:h-36 md:w-36 rounded-full border border-white/20 bg-white/5 backdrop-blur flex items-center justify-center overflow-hidden"
+              className="relative h-28 w-28 md:h-36 md:w-36 rounded-full border border-white/20 bg-white/5 backdrop-blur flex items-center justify-center overflow-hidden intro-circle"
             >
               <img
                 src="/logo.jpg"
                 alt="Logo"
                 className="intro-letter h-20 w-20 md:h-24 md:w-24 rounded-full object-cover"
+                decoding="async"
               />
             </div>
           </div>
 
           <div
-            ref={nameRef}
-            className="text-white/80 text-xs md:text-sm uppercase tracking-[0.3em]"
+            className="text-white/80 text-xs md:text-sm uppercase tracking-[0.3em] intro-name"
           >
             Moataz Hashad
           </div>
