@@ -1,13 +1,14 @@
 import React, { Suspense, useEffect, useMemo, useState } from "react";
-import Navbar from "./components/Navbar.jsx";
-import Hero from "./components/Hero.jsx";
 import BelowHero from "./components/BelowHero.jsx";
-import Projects from "./components/Projects.jsx";
-import Skills from "./components/Skills.jsx";
 import Intro from "./components/Intro.jsx";
 import ProjectDetails from "./components/ProjectDetails.jsx";
 import projects from "./data/projects.js";
-import Contact from "./components/Contact.jsx";
+
+const Navbar = React.lazy(() => import("./components/Navbar.jsx"));
+const Hero = React.lazy(() => import("./components/Hero.jsx"));
+const Projects = React.lazy(() => import("./components/Projects.jsx"));
+const Skills = React.lazy(() => import("./components/Skills.jsx"));
+const Contact = React.lazy(() => import("./components/Contact.jsx"));
 
 const LazyLiveBackground = React.lazy(() => import("./components/LiveBackground.jsx"));
 
@@ -74,10 +75,14 @@ export default function App() {
     let cancelled = false;
     const raf = requestAnimationFrame(() => {
       if (cancelled) return;
-      import("gsap/ScrollTrigger")
+      import("gsap")
         .then((mod) => {
-          const ScrollTrigger = mod.ScrollTrigger || mod.default || mod;
-          ScrollTrigger?.refresh?.();
+          const gsap = mod.gsap || mod.default || mod;
+          return import("gsap/ScrollTrigger").then((stMod) => {
+            const ScrollTrigger = stMod.ScrollTrigger || stMod.default || stMod;
+            gsap?.registerPlugin?.(ScrollTrigger);
+            ScrollTrigger?.refresh?.();
+          });
         })
         .catch(() => {});
     });
@@ -101,28 +106,40 @@ export default function App() {
 
       {showIntro ? <Intro onFinish={() => setShowIntro(false)} /> : null}
 
-      <div className={`transition-opacity duration-300 ${contentShellClass}`}>
-        <Suspense fallback={null}>
-          {loadHeavy ? <LazyLiveBackground onReady={() => setLiveBgReady(true)} /> : null}
-        </Suspense>
+      {!showIntro ? (
+        <div className={`transition-opacity duration-300 ${contentShellClass}`}>
+          <Suspense fallback={null}>
+            {loadHeavy ? <LazyLiveBackground onReady={() => setLiveBgReady(true)} /> : null}
+          </Suspense>
 
-        {selectedProject ? (
-          <ProjectDetails project={selectedProject} onBack={() => { setSelectedProject(null); try{ window.history.pushState({}, '', '/'); }catch(e){} }} />
-        ) : (
-          <>
-            <Navbar />
-            <Hero
-              showBackground={loadHeavy}
-              onBackgroundReady={() => setThreadsReady(true)}
-              scrollReady={loadHeavy && liveBgReady && threadsReady}
+          {selectedProject ? (
+            <ProjectDetails
+              project={selectedProject}
+              onBack={() => {
+                setSelectedProject(null);
+                try {
+                  window.history.pushState({}, "", "/");
+                } catch (e) {}
+              }}
             />
-            <BelowHero />
-            <Projects onSelect={(p) => setSelectedProject(p)} />
-            <Skills />
-            <Contact />
-          </>
-        )}
-      </div>
+          ) : (
+            <Suspense fallback={null}>
+              {!showIntro && <Navbar />}
+              {!showIntro && (
+                <Hero
+                  showBackground={loadHeavy}
+                  onBackgroundReady={() => setThreadsReady(true)}
+                  scrollReady={loadHeavy && liveBgReady && threadsReady}
+                />
+              )}
+              {!showIntro && <BelowHero />}
+              {!showIntro && <Projects onSelect={(p) => setSelectedProject(p)} />}
+              {!showIntro && <Skills />}
+              {!showIntro && <Contact />}
+            </Suspense>
+          )}
+        </div>
+      ) : null}
     </div>
   );
 }
